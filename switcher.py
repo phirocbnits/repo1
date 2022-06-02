@@ -12,6 +12,7 @@ def div(x,y):
         return "invalid data"
 def default(x,y):
     return "wrong option"
+print("this is a basic calculator")
 cased = {1:add,2:sub,3:mul,4:div}
 print("1:add \n2:sub\n3:mul\n4:div")
 c=int(input("enter your choice:"))
