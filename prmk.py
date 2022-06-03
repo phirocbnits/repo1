@@ -1,3 +1,4 @@
+#shebang not added
 #running a ssh server with paramiko and executing a command in the slient server without logging in
 import paramiko
 import os
