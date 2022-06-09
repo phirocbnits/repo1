@@ -1,0 +1,5 @@
+flask
+flask_sqlalchemy
+PyJWT
+pymysql
+apscheduler
