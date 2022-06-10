@@ -2,9 +2,9 @@ from flask import Flask,jsonify,request,make_response
 #from werkzeug.security import generate_password_hash
 import jwt
 import datetime
-from flask1.user import User,BlacklistToken
-from flask1.tokens import token_required
-from flask1 import app,db
+from flask1_mongo.user import User,BlacklistToken
+from flask1_mongo.tokens import token_required
+from flask1_mongo import app,db
 from base64 import b64decode
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -14,11 +14,12 @@ def dictify(u):
 #register a user
 #insert a user ... returns user details
 @app.route('/register', methods=['POST'])
-def signup_user(): 
+def signup_usr(): 
 #    try:
     data = request.get_json()
-    new_user = User(name=data['name'],email_id=data['email_id'],passwd=data['passwd'])
-    db.session.add(new_user) 
+    new_user = User(**data).save()
+    return jsonify(new_user), 201
+"""    db.session.add(new_user) 
     db.session.commit()   
     
     u = User.query.filter_by(email_id = data['email_id']).first()
@@ -26,7 +27,7 @@ def signup_user():
     response.status_code = 201 # or 400 or whatever
     return data
 #    except:
-#       return make_response('could not verify', 401, {'response': 'error'})
+#       return make_response('could not verify', 401, {'response': 'error'})"""
 def blacklisting(token):
     b=BlacklistToken(token=token)
     db.session.add(b) 
@@ -46,7 +47,6 @@ def login_user():
     token = jwt.encode({'id':user.id, 'exp' :run_at}, app.config['SECRET_KEY'])
     sched.add_job(blacklisting, run_date=run_at,args=[token])
     return jsonify({'token' : token})
-    
    return make_response('could not verify',  401, {'Authentication': '"login required"'})
 """"""
 

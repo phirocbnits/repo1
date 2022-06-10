@@ -1,0 +1,6 @@
+flask
+flask_mongoengine
+PyJWT
+pymysql
+apscheduler
+flask.ext
