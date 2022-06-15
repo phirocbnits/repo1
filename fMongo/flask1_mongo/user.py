@@ -17,15 +17,5 @@ class BlacklistToken(db.Document):
     """
     Token Document for storing JWT tokens
     """
-    __tablename__ = 'blacklist_tokens'
-
-    id = db.IntField(primary_key=True, autoincrement=True)
     token = db.StringField(unique=True, required=True)
     blacklisted_on = db.DateTimeField(default=datetime.datetime.utcnow, required=True)
-
-    def __init__(self, token):
-        self.token = token
-        self.blacklisted_on = datetime.datetime.now()
-
-    def __repr__(self):
-        return '<id: token: {}'.format(self.token)
