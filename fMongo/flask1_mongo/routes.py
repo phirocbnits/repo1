@@ -3,7 +3,7 @@ from flask import Flask,jsonify,request,make_response
 import jwt
 import datetime
 from flask_restful import Api,Resource
-from flask1_mongo.user import User,BlacklistToken
+from flask1_mongo.user import User,BlacklistToken,CurrentToken
 from flask1_mongo.tokens import token_required
 from flask1_mongo import app,db
 from base64 import b64decode
@@ -40,19 +40,22 @@ class login_user(Resource):
         if (user.passwd==auth.password):
             run_at = datetime.datetime.utcnow() + datetime.timedelta(seconds=500)
             token = jwt.encode({'email_id':user.email_id, 'exp' :run_at}, app.config['SECRET_KEY'])
+            new_token = CurrentToken(token=token).save()
             return jsonify({'token' : token})
         return make_response('could not verify',  401, {'Authentication': '"login required"'})
 
 class home(Resource):
-    @token_required
+
     def get(self):
         #returns all users' details
-        u=User.objects()
-        d=list(map(dictify,u))
-        response = jsonify({"users":u})
-        response.status_code = 200 # or 400 or whatever
-        return response
-    
+        try:
+            u=User.objects()
+            d=list(map(dictify,u))
+            response = jsonify({"users":u})
+            response.status_code = 200 # or 400 or whatever
+            return response
+        except:
+            return  "enter a valid token", 400
     #edit an attribute for a user... returns user details
     def put(self):
         bar = request.get_json()
@@ -72,7 +75,7 @@ class home(Resource):
 
 class details(Resource):
 
-    @token_required
+
     def get(self,id):
         u = User.objects(id=id).first()
         response = jsonify(u)
@@ -86,9 +89,12 @@ class details(Resource):
         return 'successfully deleted', 200
 
 class logout(Resource):
+
     def post(self):
         token = request.headers['x-access-tokens']
         BlacklistToken(token=token).save()
+        CurrentToken.objects(token=token).first().delete()
+        return "logged out successfully..visit again",200
 api = Api(app)
 
 api.add_resource(signup_usr, '/register')

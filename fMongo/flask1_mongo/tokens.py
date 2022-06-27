@@ -15,11 +15,10 @@ def token_required(f):
 
         if not token:
             return jsonify({'message': 'a valid token is missing'})
-        #try:
-        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
-        current_user = User.objects(email_id=data['email_id'])
-
-        """except:
-        return jsonify({'message': 'token is invalid'})"""
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms='HS256')
+            current_user = User.objects(email_id=data['email_id'])
+        except:
+            return jsonify({'message': 'token is invalid'})
         return f(current_user, *args, **kwargs)
     return decorator

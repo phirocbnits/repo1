@@ -15,7 +15,14 @@ def __repr__(self):
 
 class BlacklistToken(db.Document):
     """
-    Token Document for storing JWT tokens
+    Blacklisted Token list for storing JWT tokens
     """
     token = db.StringField(unique=True, required=True)
     blacklisted_on = db.DateTimeField(default=datetime.datetime.utcnow, required=True)
+
+class CurrentToken(db.Document):
+    """
+    Active Token list for storing JWT tokens
+    """
+    token = db.StringField(unique=True, required=True)
+    created_on = db.DateTimeField(default=datetime.datetime.utcnow, required=True)
