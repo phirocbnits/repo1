@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+PyJWT
+pymysql
+greenlet
+backports.zoneinfo
+cryptography
+apscheduler
