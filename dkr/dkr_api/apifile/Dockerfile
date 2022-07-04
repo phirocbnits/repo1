@@ -1,3 +1,5 @@
+# for containerizing api in localhost server
+
 # FROM python:3.8
 # COPY . .
 # RUN ls -a && pip install -r requirements.txt
@@ -9,6 +11,8 @@
 # ENV MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD 
 
 # ENTRYPOINT [ "python", "app.py" ]
+
+######for running flask api in nginx server#############
 
 FROM python:3.8
 
@@ -33,7 +37,12 @@ COPY uwsgi.ini /etc/uwsgi/
 COPY supervisord.conf /etc/
 
 COPY . /app
+ARG ROOT_PASSWORD
+ARG USR_NAME
 
+ENV USER_NAME=$USR_NAME 
+ENV MYSQL_ROOT_PASSWORD=$ROOT_PASSWORD 
 WORKDIR /app
-
+EXPOSE 5444
 CMD ["/usr/bin/supervisord"]
+
